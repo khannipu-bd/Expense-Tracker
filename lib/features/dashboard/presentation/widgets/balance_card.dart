@@ -50,15 +50,22 @@ class BalanceCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Total Balance',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: isNegative
-                      ? AppColors.expenseRed
-                      : AppColors.textSecondaryLight,
-                  fontWeight: isNegative ? FontWeight.bold : FontWeight.normal,
+              Flexible(
+                child: Text(
+                  'Total Balance',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: isNegative
+                        ? AppColors.expenseRed
+                        : AppColors.textSecondaryLight,
+                    fontWeight: isNegative
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -86,11 +93,15 @@ class BalanceCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            balanceText,
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isNegative ? AppColors.expenseRed : null,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              balanceText,
+              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isNegative ? AppColors.expenseRed : null,
+              ),
             ),
           ),
           if (isNegative || isDeficit) ...[
@@ -113,12 +124,16 @@ class BalanceCard extends StatelessWidget {
                     color: AppColors.expenseRed,
                   ),
                   SizedBox(width: 6),
-                  Text(
-                    'Deficit: Expenses exceeded income',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.expenseRed,
+                  Flexible(
+                    child: Text(
+                      'Deficit: Expenses exceeded income',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.expenseRed,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -144,29 +159,36 @@ class BalanceCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Income',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        Text(
-                          CurrencyFormatter.formatCents(
-                            periodIncomeCents,
-                            currencySymbol: currencySymbol,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Income',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: AppColors.incomeGreen,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ],
+                          Text(
+                            CurrencyFormatter.formatCents(
+                              periodIncomeCents,
+                              currencySymbol: currencySymbol,
+                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: AppColors.incomeGreen,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Row(
                   children: [
@@ -183,25 +205,31 @@ class BalanceCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Expenses',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        Text(
-                          CurrencyFormatter.formatCents(
-                            periodExpenseCents,
-                            currencySymbol: currencySymbol,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Expenses',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: AppColors.expenseRed,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ],
+                          Text(
+                            CurrencyFormatter.formatCents(
+                              periodExpenseCents,
+                              currencySymbol: currencySymbol,
+                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: AppColors.expenseRed,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

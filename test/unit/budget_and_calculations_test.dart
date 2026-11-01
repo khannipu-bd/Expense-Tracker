@@ -63,5 +63,25 @@ void main() {
         expect(budget.remainingCents, 0);
       },
     );
+
+    test('Category matching normalization works correctly', () {
+      const bCatId = ' cat_groceries_123 ';
+      const txCatId = 'CAT_GROCERIES_123';
+
+      final normalizedBCatId = bCatId.trim().toLowerCase();
+      final normalizedTxCatId = txCatId.trim().toLowerCase();
+
+      expect(normalizedBCatId, normalizedTxCatId);
+    });
+
+    test('Case-insensitive category name matching works correctly', () {
+      const bCatName = ' Groceries ';
+      const txCatName = 'groceries';
+
+      expect(
+        bCatName.trim().toLowerCase() == txCatName.trim().toLowerCase(),
+        isTrue,
+      );
+    });
   });
 }

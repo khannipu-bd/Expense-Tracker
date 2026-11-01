@@ -28,8 +28,10 @@ class ReportsScreen extends ConsumerWidget {
     final currencySymbol = settingsAsync.value?.currency.symbol ?? '৳';
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text('Financial Reports')),
       body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         padding: const EdgeInsets.only(
           left: 16,
           right: 16,
@@ -43,6 +45,7 @@ class ReportsScreen extends ConsumerWidget {
             SizedBox(
               height: 40,
               child: ListView(
+                physics: const ClampingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 children: FilterPeriod.values.map((p) {
                   final isSelected = selectedPeriod == p;
@@ -84,6 +87,8 @@ class ReportsScreen extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
             const SizedBox(height: 16),
@@ -166,6 +171,8 @@ class ReportsScreen extends ConsumerWidget {
                             'Income vs. Expenses',
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 16),
                           IncomeExpenseBarChart(
@@ -188,6 +195,8 @@ class ReportsScreen extends ConsumerWidget {
                               'Category Breakdown',
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 16),
                             CategoryPieChart(
@@ -221,6 +230,8 @@ class ReportsScreen extends ConsumerWidget {
                                         style: Theme.of(
                                           context,
                                         ).textTheme.bodyMedium,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     Text(
@@ -231,6 +242,8 @@ class ReportsScreen extends ConsumerWidget {
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
@@ -259,6 +272,8 @@ class ReportsScreen extends ConsumerWidget {
                               'Daily Spending Trend',
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 16),
                             TrendLineChart(
@@ -313,6 +328,7 @@ class _StatCard extends StatelessWidget {
                   title,
                   style: Theme.of(context).textTheme.bodySmall,
                   overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
             ],

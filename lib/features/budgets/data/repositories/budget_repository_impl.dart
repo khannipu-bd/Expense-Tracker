@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:drift/drift.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -37,27 +38,60 @@ class BudgetRepositoryImpl implements BudgetRepository {
         : BudgetPeriod.monthly;
 
     final now = DateTime.now();
-    final DateTime startDate = period == BudgetPeriod.weekly
-        ? AppDateUtils.startOfWeek(now)
-        : AppDateUtils.startOfMonth(now);
-    final DateTime endDate = period == BudgetPeriod.weekly
-        ? AppDateUtils.endOfWeek(now)
-        : AppDateUtils.endOfMonth(now);
+    final DateTime startDate =
+        (period == BudgetPeriod.weekly
+                ? AppDateUtils.startOfWeek(now)
+                : AppDateUtils.startOfMonth(now))
+            .toLocal();
+    final DateTime endDate =
+        (period == BudgetPeriod.weekly
+                ? AppDateUtils.endOfWeek(now)
+                : AppDateUtils.endOfMonth(now))
+            .toLocal();
 
-    final query = _db.select(_db.transactionsTable)
-      ..where(
-        (tbl) =>
-            tbl.type.equals('expense') &
-            tbl.date.isBiggerOrEqualValue(startDate) &
-            tbl.date.isSmallerOrEqualValue(endDate),
-      );
+    final query =
+        _db.select(_db.transactionsTable).join([
+          leftOuterJoin(
+            _db.categoriesTable,
+            _db.categoriesTable.id.equalsExp(_db.transactionsTable.categoryId),
+          ),
+        ])..where(
+          _db.transactionsTable.type.equals('expense') &
+              _db.transactionsTable.date.isBiggerOrEqualValue(startDate) &
+              _db.transactionsTable.date.isSmallerOrEqualValue(endDate),
+        );
 
-    if (bData.categoryId != null) {
-      query.where((tbl) => tbl.categoryId.equals(bData.categoryId!));
+    final rows = await query.get();
+    int spentCents = 0;
+
+    for (final r in rows) {
+      final txData = r.readTable(_db.transactionsTable);
+      final txCatData = r.readTableOrNull(_db.categoriesTable);
+
+      bool matches = false;
+      if (bData.categoryId == null) {
+        // Overall total budget includes all expense transactions in active period
+        matches = true;
+      } else {
+        // Category budget: compare normalized categoryId or normalized category name
+        final bCatIdNormalized = bData.categoryId!.trim().toLowerCase();
+        final txCatIdNormalized = txData.categoryId.trim().toLowerCase();
+
+        if (txCatIdNormalized == bCatIdNormalized) {
+          matches = true;
+        } else if (category != null && txCatData != null) {
+          final bCatNameNormalized = category.name.trim().toLowerCase();
+          final txCatNameNormalized = txCatData.name.trim().toLowerCase();
+          if (txCatNameNormalized == bCatNameNormalized) {
+            matches = true;
+          }
+        }
+      }
+
+      if (matches) {
+        spentCents += txData.amountCents;
+      }
     }
-
-    final txs = await query.get();
-    final spentCents = txs.fold<int>(0, (sum, tx) => sum + tx.amountCents);
 
     return BudgetEntity(
       id: bData.id,
@@ -81,13 +115,42 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
   @override
   Stream<List<BudgetEntity>> watchAllBudgets() {
-    return _buildBaseQuery().watch().asyncMap((rows) async {
-      final list = <BudgetEntity>[];
-      for (final row in rows) {
-        list.add(await _mapRowToEntity(row));
-      }
-      return list;
-    });
+    late StreamController<List<BudgetEntity>> controller;
+    StreamSubscription? sub1;
+    StreamSubscription? sub2;
+
+    controller = StreamController<List<BudgetEntity>>(
+      onListen: () {
+        Future<void> emitBudgets() async {
+          if (!controller.isClosed) {
+            try {
+              final list = await getAllBudgets();
+              if (!controller.isClosed) {
+                controller.add(list);
+              }
+            } catch (e, st) {
+              if (!controller.isClosed) {
+                controller.addError(e, st);
+              }
+            }
+          }
+        }
+
+        // Listen to budget / category updates
+        sub1 = _buildBaseQuery().watch().listen((_) => emitBudgets());
+        // Listen to transaction updates so spent amount updates reactively on transaction add/edit/delete
+        sub2 = _db
+            .select(_db.transactionsTable)
+            .watch()
+            .listen((_) => emitBudgets());
+      },
+      onCancel: () {
+        sub1?.cancel();
+        sub2?.cancel();
+      },
+    );
+
+    return controller.stream;
   }
 
   @override

@@ -97,8 +97,13 @@ class _AddEditCategoryDialogState extends ConsumerState<AddEditCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.category == null ? 'Add Category' : 'Edit Category'),
+      title: Text(
+        widget.category == null ? 'Add Category' : 'Edit Category',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       content: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         child: Form(
           key: _formKey,
           child: Column(
@@ -119,23 +124,26 @@ class _AddEditCategoryDialogState extends ConsumerState<AddEditCategoryDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              SegmentedButton<TransactionType>(
-                segments: const [
-                  ButtonSegment(
-                    value: TransactionType.expense,
-                    label: Text('Expense'),
-                    icon: Icon(Icons.arrow_downward_rounded),
-                  ),
-                  ButtonSegment(
-                    value: TransactionType.income,
-                    label: Text('Income'),
-                    icon: Icon(Icons.arrow_upward_rounded),
-                  ),
-                ],
-                selected: {_selectedType},
-                onSelectionChanged: (set) {
-                  setState(() => _selectedType = set.first);
-                },
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<TransactionType>(
+                  segments: const [
+                    ButtonSegment(
+                      value: TransactionType.expense,
+                      label: Text('Expense'),
+                      icon: Icon(Icons.arrow_downward_rounded),
+                    ),
+                    ButtonSegment(
+                      value: TransactionType.income,
+                      label: Text('Income'),
+                      icon: Icon(Icons.arrow_upward_rounded),
+                    ),
+                  ],
+                  selected: {_selectedType},
+                  onSelectionChanged: (set) {
+                    setState(() => _selectedType = set.first);
+                  },
+                ),
               ),
               const SizedBox(height: 16),
               Text(
@@ -147,7 +155,7 @@ class _AddEditCategoryDialogState extends ConsumerState<AddEditCategoryDialog> {
                 height: 120,
                 width: double.maxFinite,
                 child: GridView.builder(
-                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 6,
                     mainAxisSpacing: 8,
@@ -189,6 +197,7 @@ class _AddEditCategoryDialogState extends ConsumerState<AddEditCategoryDialog> {
               SizedBox(
                 height: 48,
                 child: ListView.separated(
+                  physics: const ClampingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   itemCount: AppColors.categoryPalette.length,
                   separatorBuilder: (_, __) => const SizedBox(width: 8),

@@ -44,16 +44,23 @@ class _HisablyAppState extends ConsumerState<HisablyApp> {
       ],
       routerConfig: appRouter,
       builder: (context, child) {
-        if (shouldShowLock) {
-          return AppLockScreen(
-            onUnlocked: () {
-              setState(() {
-                _isAuthenticated = true;
-              });
-            },
-          );
-        }
-        return child ?? const SizedBox.shrink();
+        final mediaQueryData = MediaQuery.of(context);
+        final clampedTextScaler = mediaQueryData.textScaler.clamp(
+          minScaleFactor: 0.8,
+          maxScaleFactor: 1.25,
+        );
+        return MediaQuery(
+          data: mediaQueryData.copyWith(textScaler: clampedTextScaler),
+          child: shouldShowLock
+              ? AppLockScreen(
+                  onUnlocked: () {
+                    setState(() {
+                      _isAuthenticated = true;
+                    });
+                  },
+                )
+              : (child ?? const SizedBox.shrink()),
+        );
       },
     );
   }

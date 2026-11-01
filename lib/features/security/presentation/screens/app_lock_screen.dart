@@ -88,115 +88,143 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(),
-            Icon(
-              Icons.lock_rounded,
-              size: 64,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Hisably Locked',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _canUseBiometrics
-                  ? 'Enter 4-digit PIN or use Biometrics'
-                  : 'Enter your 4-digit PIN to unlock',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 24),
-
-            // PIN Dots
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (index) {
-                final isFilled = index < _enteredPin.length;
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isFilled
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.grey.withValues(alpha: 0.3),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 1.5,
-                    ),
-                  ),
-                );
-              }),
-            ),
-
-            if (_errorText.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(
-                _errorText,
-                style: const TextStyle(
-                  color: AppColors.expenseRed,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-
-            const Spacer(),
-
-            // Keypad Grid
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              child: Column(
-                children: [
-                  for (var row in [
-                    ['1', '2', '3'],
-                    ['4', '5', '6'],
-                    ['7', '8', '9'],
-                  ])
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: row
-                            .map((digit) => _buildKeypadButton(digit))
-                            .toList(),
-                      ),
-                    ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
                     children: [
-                      if (_canUseBiometrics)
-                        IconButton(
-                          iconSize: 32,
-                          icon: Icon(
-                            Icons.fingerprint_rounded,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          onPressed: _attemptBiometric,
-                        )
-                      else
-                        const SizedBox(width: 48, height: 48),
-                      _buildKeypadButton('0'),
-                      IconButton(
-                        iconSize: 28,
-                        icon: const Icon(Icons.backspace_outlined),
-                        onPressed: _onBackspace,
+                      const Spacer(),
+                      Icon(
+                        Icons.lock_rounded,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Hisably Locked',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          _canUseBiometrics
+                              ? 'Enter 4-digit PIN or use Biometrics'
+                              : 'Enter your 4-digit PIN to unlock',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // PIN Dots
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          final isFilled = index < _enteredPin.length;
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isFilled
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.grey.withValues(alpha: 0.3),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1.5,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+
+                      if (_errorText.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          _errorText,
+                          style: const TextStyle(
+                            color: AppColors.expenseRed,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+
+                      const Spacer(),
+
+                      // Keypad Grid
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                        child: Column(
+                          children: [
+                            for (var row in [
+                              ['1', '2', '3'],
+                              ['4', '5', '6'],
+                              ['7', '8', '9'],
+                            ])
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: row
+                                      .map((digit) => _buildKeypadButton(digit))
+                                      .toList(),
+                                ),
+                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (_canUseBiometrics)
+                                  IconButton(
+                                    iconSize: 32,
+                                    icon: Icon(
+                                      Icons.fingerprint_rounded,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                    onPressed: _attemptBiometric,
+                                  )
+                                else
+                                  const SizedBox(width: 48, height: 48),
+                                _buildKeypadButton('0'),
+                                IconButton(
+                                  iconSize: 28,
+                                  icon: const Icon(Icons.backspace_outlined),
+                                  onPressed: _onBackspace,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-          ],
+            );
+          },
         ),
       ),
     );
@@ -204,8 +232,8 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
 
   Widget _buildKeypadButton(String digit) {
     return SizedBox(
-      width: 68,
-      height: 68,
+      width: 64,
+      height: 64,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: const CircleBorder(),

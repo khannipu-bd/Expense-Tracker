@@ -33,6 +33,7 @@ class DashboardScreen extends ConsumerWidget {
     final currencySymbol = settingsAsync.value?.currency.symbol ?? '৳';
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,10 +43,14 @@ class DashboardScreen extends ConsumerWidget {
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               DateFormatter.formatFullDate(DateTime.now()),
               style: Theme.of(context).textTheme.bodySmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -62,7 +67,9 @@ class DashboardScreen extends ConsumerWidget {
               ref.invalidate(dashboardSummaryStreamProvider);
             },
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const ClampingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               padding: const EdgeInsets.only(
                 left: 16,
                 right: 16,
@@ -76,6 +83,7 @@ class DashboardScreen extends ConsumerWidget {
                   SizedBox(
                     height: 40,
                     child: ListView(
+                      physics: const ClampingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       children:
                           [
@@ -138,7 +146,11 @@ class DashboardScreen extends ConsumerWidget {
                             Icons.remove_circle_outline_rounded,
                             color: AppColors.expenseRed,
                           ),
-                          label: const Text('Add Expense'),
+                          label: const Text(
+                            'Add Expense',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             backgroundColor: AppColors.expenseBg,
@@ -157,7 +169,11 @@ class DashboardScreen extends ConsumerWidget {
                             Icons.add_circle_outline_rounded,
                             color: AppColors.incomeGreen,
                           ),
-                          label: const Text('Add Income'),
+                          label: const Text(
+                            'Add Income',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             backgroundColor: AppColors.incomeBg,

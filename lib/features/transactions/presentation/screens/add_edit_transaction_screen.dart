@@ -172,6 +172,7 @@ class _AddEditTransactionScreenState
         singleTransactionFutureProvider(widget.transactionId!),
       );
       return Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(title: const Text('Edit Transaction')),
         body: singleTxAsync.when(
           data: (tx) {
@@ -185,6 +186,7 @@ class _AddEditTransactionScreenState
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           widget.transactionId == null ? 'Add Transaction' : 'Edit Transaction',
@@ -200,6 +202,7 @@ class _AddEditTransactionScreenState
     AsyncValue<List<CategoryEntity>> categoriesAsync,
   ) {
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(20),
       child: Form(
         key: _formKey,
@@ -275,6 +278,7 @@ class _AddEditTransactionScreenState
                 return SizedBox(
                   height: 100,
                   child: ListView.separated(
+                    physics: const ClampingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 12),
@@ -307,13 +311,19 @@ class _AddEditTransactionScreenState
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              cat.name,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
+                            SizedBox(
+                              width: 64,
+                              child: Text(
+                                cat.name,
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
                               ),
                             ),
                           ],
@@ -336,6 +346,7 @@ class _AddEditTransactionScreenState
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children: PaymentMethod.values.map((pm) {
                 final isSelected = _paymentMethod == pm;
                 return ChoiceChip(
@@ -364,7 +375,11 @@ class _AddEditTransactionScreenState
                       }
                     },
                     icon: const Icon(Icons.calendar_today_rounded, size: 18),
-                    label: Text(DateFormatter.formatShortDate(_selectedDate)),
+                    label: Text(
+                      DateFormatter.formatShortDate(_selectedDate),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -384,6 +399,8 @@ class _AddEditTransactionScreenState
                       _selectedTime != null
                           ? _selectedTime!.format(context)
                           : 'Select Time',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),

@@ -28,6 +28,8 @@ class CategoryBreakdownWidget extends StatelessWidget {
           style: Theme.of(
             context,
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 12),
         ListView.separated(
@@ -55,8 +57,11 @@ class CategoryBreakdownWidget extends StatelessWidget {
                           child: Text(
                             cat.categoryName,
                             style: Theme.of(context).textTheme.titleMedium,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -68,6 +73,8 @@ class CategoryBreakdownWidget extends StatelessWidget {
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               '$percentPct%',

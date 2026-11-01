@@ -86,8 +86,13 @@ class _AddEditBudgetDialogState extends ConsumerState<AddEditBudgetDialog> {
     );
 
     return AlertDialog(
-      title: Text(widget.budget == null ? 'Set Budget' : 'Edit Budget'),
+      title: Text(
+        widget.budget == null ? 'Set Budget' : 'Edit Budget',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       content: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         child: Form(
           key: _formKey,
           child: Column(
@@ -99,21 +104,24 @@ class _AddEditBudgetDialogState extends ConsumerState<AddEditBudgetDialog> {
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 8),
-              SegmentedButton<BudgetPeriod>(
-                segments: const [
-                  ButtonSegment(
-                    value: BudgetPeriod.monthly,
-                    label: Text('Monthly'),
-                  ),
-                  ButtonSegment(
-                    value: BudgetPeriod.weekly,
-                    label: Text('Weekly'),
-                  ),
-                ],
-                selected: {_period},
-                onSelectionChanged: (set) {
-                  setState(() => _period = set.first);
-                },
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<BudgetPeriod>(
+                  segments: const [
+                    ButtonSegment(
+                      value: BudgetPeriod.monthly,
+                      label: Text('Monthly'),
+                    ),
+                    ButtonSegment(
+                      value: BudgetPeriod.weekly,
+                      label: Text('Weekly'),
+                    ),
+                  ],
+                  selected: {_period},
+                  onSelectionChanged: (set) {
+                    setState(() => _period = set.first);
+                  },
+                ),
               ),
               const SizedBox(height: 16),
               Text('Scope', style: Theme.of(context).textTheme.titleSmall),
@@ -121,6 +129,7 @@ class _AddEditBudgetDialogState extends ConsumerState<AddEditBudgetDialog> {
               categoriesAsync.when(
                 data: (categories) {
                   return DropdownButtonFormField<String?>(
+                    isExpanded: true,
                     initialValue: _selectedCategoryId,
                     decoration: const InputDecoration(
                       hintText: 'Select Budget Scope',
@@ -128,12 +137,18 @@ class _AddEditBudgetDialogState extends ConsumerState<AddEditBudgetDialog> {
                     items: [
                       const DropdownMenuItem(
                         value: null,
-                        child: Text('Overall Total Budget'),
+                        child: Text(
+                          'Overall Total Budget',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       ...categories.map(
                         (cat) => DropdownMenuItem(
                           value: cat.id,
-                          child: Text('Category: ${cat.name}'),
+                          child: Text(
+                            'Category: ${cat.name}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ],

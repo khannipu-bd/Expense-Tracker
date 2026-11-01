@@ -26,6 +26,7 @@ class TransactionDetailScreen extends ConsumerWidget {
     final currencySymbol = settingsAsync.value?.currency.symbol ?? '৳';
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Transaction Details'),
         actions: [
@@ -90,6 +91,7 @@ class TransactionDetailScreen extends ConsumerWidget {
               AppColors.categoryPalette.first.toARGB32();
 
           return SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
@@ -106,13 +108,18 @@ class TransactionDetailScreen extends ConsumerWidget {
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
-                AmountText(
-                  amountCents: tx.amountCents,
-                  currencySymbol: currencySymbol,
-                  type: tx.type,
-                  style: Theme.of(context).textTheme.displayLarge,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: AmountText(
+                    amountCents: tx.amountCents,
+                    currencySymbol: currencySymbol,
+                    type: tx.type,
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Card(

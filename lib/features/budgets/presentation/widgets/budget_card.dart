@@ -54,10 +54,14 @@ class BudgetCard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       'Period: ${budget.period.displayName}',
                       style: Theme.of(context).textTheme.bodySmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -115,13 +119,23 @@ class BudgetCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Spent: ${CurrencyFormatter.formatCents(budget.spentCents, currencySymbol: currencySymbol)}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              Flexible(
+                child: Text(
+                  'Spent: ${CurrencyFormatter.formatCents(budget.spentCents, currencySymbol: currencySymbol)}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Text(
-                'Limit: ${CurrencyFormatter.formatCents(budget.amountCents, currencySymbol: currencySymbol)}',
-                style: Theme.of(context).textTheme.bodySmall,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'Limit: ${CurrencyFormatter.formatCents(budget.amountCents, currencySymbol: currencySymbol)}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
               ),
             ],
           ),
@@ -147,18 +161,24 @@ class BudgetCard extends ConsumerWidget {
                   color: progressColor,
                 ),
               ),
-              Text(
-                budget.isExceeded
-                    ? 'Exceeded by ${CurrencyFormatter.formatCents(budget.spentCents - budget.amountCents, currencySymbol: currencySymbol)}'
-                    : 'Remaining: ${CurrencyFormatter.formatCents(budget.remainingCents, currencySymbol: currencySymbol)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: budget.isExceeded
-                      ? AppColors.expenseRed
-                      : AppColors.textSecondaryLight,
-                  fontWeight: budget.isExceeded
-                      ? FontWeight.bold
-                      : FontWeight.normal,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  budget.isExceeded
+                      ? 'Exceeded by ${CurrencyFormatter.formatCents(budget.spentCents - budget.amountCents, currencySymbol: currencySymbol)}'
+                      : 'Remaining: ${CurrencyFormatter.formatCents(budget.remainingCents, currencySymbol: currencySymbol)}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: budget.isExceeded
+                        ? AppColors.expenseRed
+                        : AppColors.textSecondaryLight,
+                    fontWeight: budget.isExceeded
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
               ),
             ],

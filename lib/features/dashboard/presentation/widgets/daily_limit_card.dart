@@ -36,6 +36,8 @@ class DailyLimitCard extends StatelessWidget {
               child: Text(
                 'Set an overall monthly budget in Budgets tab to track your daily limit.',
                 style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -85,9 +87,12 @@ class DailyLimitCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: isExceeded ? AppColors.expenseRed : null,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (isExceeded)
+              if (isExceeded) ...[
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -106,25 +111,36 @@ class DailyLimitCard extends StatelessWidget {
                     ),
                   ),
                 ),
+              ],
             ],
           ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Today's Limit: $limitStr",
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              Flexible(
+                child: Text(
+                  "Today's Limit: $limitStr",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Text(
-                "Spent Today: $spentStr",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isExceeded
-                      ? AppColors.expenseRed
-                      : AppColors.incomeGreen,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  "Spent Today: $spentStr",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isExceeded
+                        ? AppColors.expenseRed
+                        : AppColors.incomeGreen,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
               ),
             ],

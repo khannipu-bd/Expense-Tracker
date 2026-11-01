@@ -21,6 +21,7 @@ class CategoriesScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const Text('Categories'),
           bottom: const TabBar(
@@ -81,7 +82,8 @@ class _CategoryList extends ConsumerWidget {
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 80),
       itemCount: categories.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
@@ -95,6 +97,8 @@ class _CategoryList extends ConsumerWidget {
             title: Text(
               cat.name,
               style: Theme.of(context).textTheme.titleMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: cat.isDefault
                 ? const Text('Default Category', style: TextStyle(fontSize: 12))

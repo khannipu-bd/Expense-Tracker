@@ -21,10 +21,12 @@ class SettingsScreen extends ConsumerWidget {
     final settingsAsync = ref.watch(settingsNotifierProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text('Settings & Preferences')),
       body: settingsAsync.when(
         data: (settings) {
           return ListView(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(
               left: 16,
               right: 16,
@@ -321,39 +323,42 @@ class SettingsScreen extends ConsumerWidget {
         builder: (context, setState) {
           return AlertDialog(
             title: const Text('Set 4-Digit Security PIN'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: pinController,
-                  obscureText: true,
-                  maxLength: 4,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter 4-Digit PIN',
-                  ),
-                ),
-                TextField(
-                  controller: confirmController,
-                  obscureText: true,
-                  maxLength: 4,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirm 4-Digit PIN',
-                  ),
-                ),
-                if (errorMsg.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    errorMsg,
-                    style: const TextStyle(
-                      color: AppColors.expenseRed,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+            content: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: pinController,
+                    obscureText: true,
+                    maxLength: 4,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter 4-Digit PIN',
                     ),
                   ),
+                  TextField(
+                    controller: confirmController,
+                    obscureText: true,
+                    maxLength: 4,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm 4-Digit PIN',
+                    ),
+                  ),
+                  if (errorMsg.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      errorMsg,
+                      style: const TextStyle(
+                        color: AppColors.expenseRed,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
             actions: [
               TextButton(
@@ -394,7 +399,6 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showClearDataSafetyModal(BuildContext context, WidgetRef ref) async {
-    // Step 1 Confirmation
     final step1 = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -427,7 +431,6 @@ class SettingsScreen extends ConsumerWidget {
 
     if (step1 != true || !context.mounted) return;
 
-    // Step 2 Strong Double Confirmation (Typing DELETE)
     final confirmController = TextEditingController();
     final step2 = await showDialog<bool>(
       context: context,
@@ -438,26 +441,29 @@ class SettingsScreen extends ConsumerWidget {
 
           return AlertDialog(
             title: const Text('Confirm Data Reset'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'To prevent accidental loss, please type "DELETE" below to confirm reset:',
-                  style: TextStyle(fontSize: 13),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: confirmController,
-                  autofocus: true,
-                  textCapitalization: TextCapitalization.characters,
-                  decoration: const InputDecoration(
-                    hintText: 'Type DELETE',
-                    border: OutlineInputBorder(),
+            content: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'To prevent accidental loss, please type "DELETE" below to confirm reset:',
+                    style: TextStyle(fontSize: 13),
                   ),
-                  onChanged: (_) => setState(() {}),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: confirmController,
+                    autofocus: true,
+                    textCapitalization: TextCapitalization.characters,
+                    decoration: const InputDecoration(
+                      hintText: 'Type DELETE',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(
@@ -504,6 +510,7 @@ class SettingsScreen extends ConsumerWidget {
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
+            physics: const ClampingScrollPhysics(),
             shrinkWrap: true,
             itemCount: AppCurrencies.allCurrencies.length,
             itemBuilder: (context, index) {

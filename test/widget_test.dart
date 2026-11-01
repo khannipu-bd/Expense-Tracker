@@ -23,7 +23,7 @@ void main() {
 
     // Verify main bottom navigation items are displayed
     expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Transactions'), findsOneWidget);
+    expect(find.text('History'), findsOneWidget);
     expect(find.text('Reports'), findsOneWidget);
     expect(find.text('Budgets'), findsOneWidget);
     expect(find.text('Settings'), findsOneWidget);

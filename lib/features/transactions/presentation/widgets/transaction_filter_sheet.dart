@@ -57,6 +57,7 @@ class _TransactionFilterSheetState
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoriesStreamProvider);
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -65,7 +66,12 @@ class _TransactionFilterSheetState
       expand: false,
       builder: (context, scrollController) {
         return Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20 + bottomInset,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -85,6 +91,7 @@ class _TransactionFilterSheetState
               Expanded(
                 child: ListView(
                   controller: scrollController,
+                  physics: const ClampingScrollPhysics(),
                   children: [
                     Text(
                       'Sort By',
@@ -93,6 +100,7 @@ class _TransactionFilterSheetState
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
+                      runSpacing: 8,
                       children: [
                         ChoiceChip(
                           label: const Text('Newest First'),
@@ -128,6 +136,7 @@ class _TransactionFilterSheetState
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
+                      runSpacing: 8,
                       children: [
                         ChoiceChip(
                           label: const Text('All'),
@@ -161,6 +170,7 @@ class _TransactionFilterSheetState
                             : categories.where((c) => c.type == _type).toList();
 
                         return DropdownButtonFormField<String?>(
+                          isExpanded: true,
                           initialValue: _categoryId,
                           decoration: const InputDecoration(
                             hintText: 'Select Category',
@@ -168,12 +178,18 @@ class _TransactionFilterSheetState
                           items: [
                             const DropdownMenuItem(
                               value: null,
-                              child: Text('All Categories'),
+                              child: Text(
+                                'All Categories',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             ...filteredCategories.map(
                               (cat) => DropdownMenuItem(
                                 value: cat.id,
-                                child: Text(cat.name),
+                                child: Text(
+                                  cat.name,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
                           ],
@@ -191,6 +207,7 @@ class _TransactionFilterSheetState
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
+                      runSpacing: 8,
                       children: [
                         ChoiceChip(
                           label: const Text('All'),
@@ -238,6 +255,8 @@ class _TransactionFilterSheetState
                                   ? 'From Date'
                                   : DateFormatter.formatShortDate(_startDate!),
                               style: const TextStyle(fontSize: 12),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -264,6 +283,8 @@ class _TransactionFilterSheetState
                                   ? 'To Date'
                                   : DateFormatter.formatShortDate(_endDate!),
                               style: const TextStyle(fontSize: 12),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),

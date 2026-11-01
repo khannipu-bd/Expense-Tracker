@@ -16,6 +16,7 @@ class BudgetsScreen extends ConsumerWidget {
     final budgetsAsync = ref.watch(budgetsStreamProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Budget Management'),
         actions: [
@@ -50,6 +51,7 @@ class BudgetsScreen extends ConsumerWidget {
           }
 
           return ListView.separated(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.only(
               left: 16,
               right: 16,

@@ -47,6 +47,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final currencySymbol = settingsAsync.value?.currency.symbol ?? '৳';
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Transaction History'),
         actions: [
@@ -147,6 +148,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 }
 
                 return ListView.builder(
+                  physics: const ClampingScrollPhysics(),
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
